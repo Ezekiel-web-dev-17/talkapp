@@ -16,6 +16,7 @@ const MayKnow = () => {
   const [searchedUsers, setSearchedUsers] = useState([]);
   const [realChatsUsers, setRealChatsUsers] = useState([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Demo chats
   const noOfChat = [
@@ -36,7 +37,10 @@ const MayKnow = () => {
   // Real Chats from api
   const usersGetter = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const res = await api.get("/users");
+      setLoading(false);
       const data = res.data.data.filter((user) => user._id != userId);
 
       // const userUsers = data.map((eachUser) => {
@@ -44,7 +48,7 @@ const MayKnow = () => {
       // });
       setRealChatsUsers(data);
     } catch (error) {
-      setError(error.message);
+      setError(error);
       console.error("Error getting users.");
     }
   };
@@ -97,10 +101,24 @@ const MayKnow = () => {
           {error && (
             <p className=" text-white ps-4 ">
               Couldn't Get People You may Know Due To:{" "}
-              <bdo className=" text-danger">{`${error}`}</bdo>
+              <bdo className=" text-danger">{`${error?.message}`}</bdo>
             </p>
           )}
           {/* Shows people if searched length is more than 0 while while search btn is clicked */}
+          {loading && (
+            <div className="d-flex justify-content-center align-items-center mt-3">
+              <div
+                class="spinner-border text-primary ms-2 "
+                role="status"
+                style={{
+                  width: "1.5rem",
+                  height: "1.5rem",
+                }}
+              >
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          )}
           {searchMode ? (
             searchedUsers.length > 0 ? (
               searchedUsers.map((no, i) => <Talkers no={no} i={i} />)

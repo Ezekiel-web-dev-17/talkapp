@@ -7,6 +7,8 @@ import { ApiContext } from "../../context/ApiContext.jsx";
 const auth = () => {
   const api = useContext(ApiContext);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,10 +22,16 @@ const auth = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      setLoading(true);
+      setError(null);
       await api.post("/auth/sign-up", formData);
+      setLoading(false);
       navigate("/login");
     } catch (err) {
       console.error("Sign-up failed:", err.response?.data || err.message);
+      setError(
+        err.response?.data?.message || "An error occurred during sign-up."
+      );
     }
   };
 
@@ -35,10 +43,25 @@ const auth = () => {
       >
         <BsChatDots className="" />
         <h1 className=" ps-1 mb-0 ">Talk</h1>
+        {loading && (
+          <div
+            class="spinner-border text-primary ms-2"
+            role="status"
+            style={{ width: "1.5rem", height: "1.5rem" }}
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        )}
       </Link>
 
       <div className="d-flex justify-content-center flex-column align-items-center border rounded-3 py-2">
         <h3 className=" w-75 text-white">Sign up</h3>
+
+        {error && (
+          <div className="alert alert-danger w-75" role="alert">
+            {error}
+          </div>
+        )}
 
         <form
           action=""

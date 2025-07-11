@@ -4,11 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 import "./login.css";
 import { ApiContext } from "../../context/ApiContext.jsx";
 
-const login = ({ onLogin }) => {
+const login = () => {
   const api = useContext(ApiContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // handles change in form input
   const handleChange = (event) => {
@@ -19,7 +20,10 @@ const login = ({ onLogin }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      setLoading(true);
+      setError(null);
       const response = await api.post("/auth/sign-in", formData);
+      setLoading(false);
       localStorage.setItem("userId", response.data.data.user._id);
       localStorage.setItem("userToken", response.data.data.token);
       navigate("/");
@@ -37,6 +41,15 @@ const login = ({ onLogin }) => {
       >
         <BsChatDots className=" " />
         <h1 className=" ps-1 mb-0 ">Talk</h1>
+        {loading && (
+          <div
+            className="spinner-grow text-primary ms-2"
+            role="status"
+            style={{ width: "1.5rem", height: "1.5rem" }}
+          >
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        )}
       </Link>
 
       <div className="d-flex justify-content-center flex-column align-items-center border rounded-3 py-2">
