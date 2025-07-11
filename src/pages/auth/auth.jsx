@@ -45,11 +45,11 @@ const auth = () => {
         <h1 className=" ps-1 mb-0 ">Talk</h1>
         {loading && (
           <div
-            class="spinner-border text-primary ms-2"
+            className="spinner-border text-primary ms-2"
             role="status"
             style={{ width: "1.5rem", height: "1.5rem" }}
           >
-            <span class="visually-hidden">Loading...</span>
+            <span className="visually-hidden">Loading...</span>
           </div>
         )}
       </Link>

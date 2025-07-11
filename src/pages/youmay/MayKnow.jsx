@@ -39,7 +39,7 @@ const MayKnow = () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await api.get("/users");
+      const res = await api.get("/users", { timeout: 10000 });
       setLoading(false);
       const data = res.data.data.filter((user) => user._id != userId);
 
@@ -48,8 +48,21 @@ const MayKnow = () => {
       // });
       setRealChatsUsers(data);
     } catch (error) {
-      setError(error);
-      console.error("Error getting users.");
+      if (error.code === "ERR_NETWORK") {
+        setError({
+          message: "Network Error. Please check your connection.",
+        });
+      } else if (error.code === "ECONNABORTED") {
+        setError({
+          message: "Request timed out. Please try again later.",
+        });
+      } else {
+        setError({
+          message: error.message || "An unexpected error occurred.",
+        });
+      }
+      setLoading(false);
+      console.error("Error getting users.", error);
     }
   };
 
@@ -108,14 +121,14 @@ const MayKnow = () => {
           {loading && (
             <div className="d-flex justify-content-center align-items-center mt-3">
               <div
-                class="spinner-border text-primary ms-2 "
+                className="spinner-border text-primary ms-2 "
                 role="status"
                 style={{
                   width: "1.5rem",
                   height: "1.5rem",
                 }}
               >
-                <span class="visually-hidden">Loading...</span>
+                <span className="visually-hidden">Loading...</span>
               </div>
             </div>
           )}

@@ -12,7 +12,9 @@ const ChatDetails = () => {
   const [newMessage, setNewMessage] = useState("");
   const [to, setTo] = useState({});
   const messagesEndRef = useRef(null);
-  let conversations = messages[0] ? messages[0] : [];
+  const conversations = messages.filter((msg) =>
+    msg.participants.includes(to._id)
+  );
   const [error, setError] = useState("");
 
   // Fetch messages for this chatId
@@ -30,10 +32,7 @@ const ChatDetails = () => {
       getMsg();
     })
       .then((res) => {
-        setMessages([res.data.data]);
-        conversations = res.data.data.filter((msg) =>
-          msg.participants.includes(to._id)
-        );
+        setMessages(res.data.data);
       })
       .catch((reject) => {
         setError("Could not fetch Messages");
@@ -53,7 +52,7 @@ const ChatDetails = () => {
       getUser();
     })
       .then((res) => {
-        const { _id, name } = res;
+        const { _id, name } = res.data;
         setTo({ _id, name });
       })
       .catch((reject) => {
@@ -68,7 +67,7 @@ const ChatDetails = () => {
       behavior: "smooth",
       block: "end",
     });
-  }, [messages, setMessages]);
+  }, [messages]);
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -82,7 +81,7 @@ const ChatDetails = () => {
     // Post request to Create messages
     try {
       const res = await api.post("/messages/create", messageData);
-      setMessages((prevCreatedMsgs) => [...prevCreatedMsgs, messageData]);
+      setMessages((prevCreatedMsgs) => [...prevCreatedMsgs, res.data.data]);
       setNewMessage("");
     } catch (err) {
       console.error("Failed to send message:", err);
@@ -108,7 +107,7 @@ const ChatDetails = () => {
             />
           </Link>
           <div className="div1 bg-transparent text-white">
-            <h5 className=" fs-6 fw-lighter bg-transparent mb-0">{to.name}</h5>
+            <h5 className=" fs-6 fw-medium bg-transparent mb-0">{to.name}</h5>
           </div>
         </div>
       </nav>
@@ -121,7 +120,7 @@ const ChatDetails = () => {
         {conversations.map((msg, i) => {
           const isMine = msg.participants[1] === user;
           return (
-            <div className=" ">
+            <div className=" " key={msg._id}>
               {error && (
                 <p className="text-white mx-5 mt-3 fs-6">
                   Please <Link to="/login">login</Link> to view the chat.{error}
