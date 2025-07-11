@@ -1,0 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Playwrite+HU:wght@100..400&display=swap");
+
+.logo h1 {
+  font-family: "Playwrite HU", cursive;
+}
+
+.sign-up-page {
+  background: #000;
+  height: 100vh;
+}
+
+.sign-up-page > div {
+  width: 270px;
+}

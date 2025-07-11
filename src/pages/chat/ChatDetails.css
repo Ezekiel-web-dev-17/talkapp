@@ -1,0 +1,99 @@
+* {
+  background: #000;
+}
+
+.chat {
+  max-height: fit-content;
+}
+
+.text-sender {
+  width: 100vw;
+  bottom: 0px;
+  padding-bottom: 10px;
+}
+
+.text-sender textarea {
+  max-height: 20px;
+  min-width: 270px;
+}
+
+.text-form textarea::placeholder {
+  font-style: italic;
+  color: #ffffff;
+}
+
+.text-form textarea:focus-within {
+  font-weight: 500;
+}
+
+.messages-area {
+  width: 370px;
+  place-self: center;
+  min-height: 100dvh;
+}
+
+.mine,
+.theirs {
+  width: fit-content;
+  max-width: 270px;
+}
+
+.mine div,
+.theirs div {
+  font-size: 12px;
+}
+
+.mine {
+  place-self: end;
+  background: rgb(92, 92, 92);
+  color: #eee;
+}
+
+.mine div {
+  text-align: end;
+}
+
+.theirs {
+  color: 000;
+  background: #e6e6e6;
+}
+
+footer {
+  max-width: fit-content;
+  right: 0;
+}
+
+.text-sender form {
+  width: 92vw;
+  background: rgba(108, 117, 125, 0.75);
+}
+
+@media (width: 320px) {
+  footer {
+    left: 10px;
+  }
+
+  .text-sender form {
+    width: 78vw;
+  }
+
+  .text-sender textarea {
+    min-width: 230px;
+    min-height: 20px;
+  }
+
+  .messages-area {
+    max-width: 300px;
+    padding-inline: 0;
+  }
+
+  .mine,
+  .theirs {
+    max-width: 215px;
+  }
+
+  .send {
+    max-height: 20px;
+    max-width: 20px;
+  }
+}

@@ -1,0 +1,39 @@
+@import url("https://fonts.googleapis.com/css2?family=Playwrite+HU:wght@100..400&display=swap");
+
+.nav-nav {
+  border-bottom: 1px solid #585252;
+  box-shadow: 0px 1px 10px #fff;
+}
+
+.nav-nav input::placeholder {
+  font-size: 12px;
+  font-style: italic;
+  color: #fff;
+}
+
+.nav-nav input {
+  font-style: normal;
+  color: #fff;
+}
+
+.logo,
+.others {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo:nth-child(1) {
+  font-size: 25px;
+}
+
+h4 {
+  font-family: "Playwrite HU", cursive;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.others {
+  gap: 15px;
+}

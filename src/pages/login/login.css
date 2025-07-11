@@ -1,0 +1,13 @@
+.login-form input::placeholder {
+  font-style: italic;
+  color: rgb(0, 89, 255);
+}
+
+.login-page {
+  height: 100vh;
+  background: #000;
+}
+
+.login-page > div {
+  width: 270px;
+}

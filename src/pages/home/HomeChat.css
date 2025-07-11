@@ -1,0 +1,29 @@
+.home-div div {
+  margin-top: 5px;
+  padding-inline: 20px;
+}
+
+.home-div {
+  background: #000;
+  margin-top: 50px;
+}
+
+.chat {
+  height: 70px;
+}
+
+.div1,
+.div2,
+img,
+.div1 h6,
+.div1 p {
+  background: #000;
+}
+
+.div1 h6 {
+  font-size: 14px;
+}
+
+.div2 {
+  font-size: 12px;
+}

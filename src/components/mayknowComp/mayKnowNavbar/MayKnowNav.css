@@ -1,0 +1,4 @@
+.may-know-nav input::placeholder {
+  font-style: italic;
+  color: #fff;
+}
