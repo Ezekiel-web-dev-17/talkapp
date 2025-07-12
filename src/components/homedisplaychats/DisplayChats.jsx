@@ -1,4 +1,3 @@
-// Whenever there's data ask chat gpt why this code runs.
 import "./DisplayChats.css";
 import EachTalker from "../eachTalker/EachTalker.jsx";
 import { useContext, useEffect, useState } from "react";
@@ -9,33 +8,23 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
   const api = useContext(ApiContext);
   const [error, setError] = useState("");
   const [user, setUser] = useState([]);
-  const [usersNames, setUsersNames] = useState([]);
-  const [talkersId, setTalkersId] = useState([]);
-  const [real, setReal] = useState({});
 
   const fetchUsersId = async () => {
     try {
-      function spokenTo(eachResponse) {
-        return eachResponse.data.data[1].participants.includes(userId)
-          ? eachResponse.participants.find((id) => id !== userId)
-          : false;
-      }
-
       const response = await api.get("/messages");
-      console.log(typeof response);
-      console.log(response);
-
-      const peopleSpokenTo = [response].map((eachResponse) => {
-        return spokenTo(eachResponse);
+      const peopleSpokenTo = response.data.data.map((eachResponse) => {
+        if (eachResponse.participants.includes(userId)) {
+          return eachResponse.participants.filter((each) => each !== userId)[0];
+        }
       });
 
-      const spokenToWithNoRepeat = Array.from(new Set(peopleSpokenTo));
-
-      setTalkersId(spokenToWithNoRepeat);
+      const spokenToWithNoRepeat = Array.from(new Set(peopleSpokenTo)).filter(
+        Boolean
+      );
 
       function recentMsgToEachPerson(arr, response) {
         const map = {};
-        response.map((res) => {
+        response.data.data.map((res) => {
           for (let i = 0; i < arr.length; i++) {
             if (res.participants.includes(arr[i])) {
               map[arr[i]] = res;
@@ -46,34 +35,25 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
         return map;
       }
 
-      setReal(recentMsgToEachPerson(spokenToWithNoRepeat, response));
-    } catch (error) {
-      const err = new Error("Error getting users Id", error);
-      setError(error.message);
-      throw err;
-    }
-  };
-
-  function addNameKey(msgs, names) {
-    [msgs].map((msgObj) => {
-      for (let i = 0; i < names.length; i++) {
-        for (let ids in msgObj) {
-          msgObj[ids]["name"] = names[i++];
-          setUser((prevMsgs) => [...prevMsgs, msgObj[ids]]);
-        }
+      let names = [];
+      for (let i = 0; i < spokenToWithNoRepeat.length; i++) {
+        const usersResponse = await api.get(
+          `/users/${spokenToWithNoRepeat[i]}`
+        );
+        names.push(usersResponse.data.data.name);
       }
-    });
-  }
 
-  const fetchUsers = async () => {
-    try {
-      for (let i = 0; i < talkersId.length; i++) {
-        if (talkersId[i] === false) return;
-        const response = await api.get(`/users/${talkersId[i]}`);
-        setUsersNames((prevNameRes) => [...prevNameRes, response.data.name]);
-      }
+      const userArray = Object.keys(
+        recentMsgToEachPerson(spokenToWithNoRepeat, response)
+      ).map((id, i) => {
+        return {
+          ...recentMsgToEachPerson(spokenToWithNoRepeat, response)[id],
+          name: names[i],
+        };
+      });
+      setUser(userArray);
     } catch (error) {
-      const err = new Error("Error getting users", error.message);
+      const err = new Error("Error getting users messages", error);
       setError(error.message);
       throw err;
     }
@@ -81,8 +61,6 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
 
   useEffect(() => {
     fetchUsersId();
-    fetchUsers();
-    addNameKey(real, usersNames);
   }, []);
 
   // changes the array of searched names
@@ -119,7 +97,7 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
           </p>
         )
       ) : (
-        <EachTalker searched={searched} userId={userId} />
+        <EachTalker searched={user} userId={userId} />
       )}
     </div>
   );
