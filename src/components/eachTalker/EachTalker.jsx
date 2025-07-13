@@ -1,4 +1,3 @@
-import React from "react";
 import "./EachTalker.css";
 import { Link } from "react-router-dom";
 import { BsPerson } from "react-icons/bs";

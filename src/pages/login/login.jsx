@@ -29,7 +29,7 @@ const login = () => {
       navigate("/");
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
-      setError("Invalid credentials.");
+      setError(err.response?.data.error || err.message);
     }
   };
 

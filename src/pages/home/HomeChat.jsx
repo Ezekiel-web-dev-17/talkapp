@@ -30,7 +30,7 @@ const HomeChat = () => {
         />
       ) : (
         <div className="d-flex flex-column justify-content-center align-items-center mt-5 pt-5">
-          <h3 className="text-white">Welcome to TalkApp</h3>
+          <h3 className="text-white">Welcome to TalkApp.</h3>
           <p className="text-white text-center">
             Please Sign In to view Messages and talk to someone.
           </p>

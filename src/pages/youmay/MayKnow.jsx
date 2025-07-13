@@ -18,22 +18,6 @@ const MayKnow = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Demo chats
-  const noOfChat = [
-    "Sia",
-    "Marshmallow",
-    "Alvin",
-    "Sebastian",
-    "Theophilus",
-    "Ben",
-    "Francis",
-    "Sam",
-    "Theresa",
-    "Aloysius",
-    "Rachel",
-    "Joel",
-  ];
-
   // Real Chats from api
   const usersGetter = async () => {
     try {
@@ -43,9 +27,6 @@ const MayKnow = () => {
       setLoading(false);
       const data = res.data.data.filter((user) => user._id != userId);
 
-      // const userUsers = data.map((eachUser) => {
-      //   return eachUser.name;
-      // });
       setRealChatsUsers(data);
     } catch (error) {
       if (error.code === "ERR_NETWORK") {
@@ -70,9 +51,6 @@ const MayKnow = () => {
   useEffect(() => {
     // changes the searched array content
     const talk = (searched) => {
-      // const searching = noOfChat.filter((chat) => {
-      //   return chat.toLowerCase().includes(searched.toLowerCase());
-      // });
       const searching = realChatsUsers.filter((user) => {
         if (user.name.toLowerCase() == searched.toLowerCase()) return user;
       });

@@ -1,6 +1,4 @@
-import React from "react";
 import { BsArrowLeftShort, BsSearch } from "react-icons/bs";
-
 import "./MayKnowNav.css";
 import { Link } from "react-router-dom";
 

@@ -12,50 +12,52 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
   const fetchUsersId = async () => {
     try {
       const response = await api.get("/messages");
-      const peopleSpokenTo = response.data.data.map((eachResponse) => {
-        if (eachResponse.participants.includes(userId)) {
-          return eachResponse.participants.filter((each) => each !== userId)[0];
-        }
-      });
+
+      const peopleSpokenTo = response.data.data
+        .filter((msg) => msg.participants.includes(userId))
+        .map((msg) => msg.participants.find((id) => id !== userId));
 
       const spokenToWithNoRepeat = Array.from(new Set(peopleSpokenTo)).filter(
         Boolean
       );
 
       function recentMsgToEachPerson(arr, response) {
-        const map = {};
+        const mapMessages = {};
         response.data.data.map((res) => {
           for (let i = 0; i < arr.length; i++) {
             if (res.participants.includes(arr[i])) {
-              map[arr[i]] = res;
+              mapMessages[arr[i]] = res;
             }
           }
         });
 
-        return map;
+        return mapMessages;
       }
 
-      let names = [];
-      for (let i = 0; i < spokenToWithNoRepeat.length; i++) {
-        const usersResponse = await api.get(
-          `/users/${spokenToWithNoRepeat[i]}`
-        );
-        names.push(usersResponse.data.data.name);
-      }
-
-      const userArray = Object.keys(
-        recentMsgToEachPerson(spokenToWithNoRepeat, response)
-      ).map((id, i) => {
-        return {
-          ...recentMsgToEachPerson(spokenToWithNoRepeat, response)[id],
-          name: names[i],
-        };
+      const idsRequests = spokenToWithNoRepeat.map((id) => {
+        return id;
       });
+
+      const nameRequests = await api.post("/users/multi", {
+        userIds: idsRequests,
+      });
+
+      const userMap = {};
+      nameRequests.data.data.forEach((user) => {
+        userMap[user._id] = user.name;
+      });
+
+      const recentMsgs = recentMsgToEachPerson(spokenToWithNoRepeat, response);
+
+      const userArray = Object.keys(recentMsgs).map((id, i) => ({
+        ...recentMsgs[id],
+        name: userMap[id] || "Unknown User",
+      }));
+
       setUser(userArray);
     } catch (error) {
-      const err = new Error("Error getting users messages", error);
-      setError(error.message);
-      throw err;
+      console.error(error);
+      setError("Error getting users messages: " + error.message);
     }
   };
 
@@ -72,9 +74,10 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
   };
 
   // allows change of searched on changing input value
-  useEffect(() => {
-    talk(filter);
-  }, filter);
+  // useEffect(() => {
+  //   talk(filter);
+  // }, [filter]);
+  console.log(user);
 
   return (
     <div className="display-chats  pb-5 px-0">
