@@ -12,9 +12,11 @@ const ChatDetails = () => {
   const [newMessage, setNewMessage] = useState("");
   const [to, setTo] = useState({});
   const messagesEndRef = useRef(null);
-  const conversations = messages.filter((msg) =>
-    msg.participants.includes(to._id)
-  );
+  const conversations = messages.filter((msg) => {
+    if (msg.participants.includes(user) && msg.participants.length === 2) {
+      return msg.participants.includes(to._id);
+    }
+  });
   const [error, setError] = useState("");
 
   // Fetch messages for this chatId
