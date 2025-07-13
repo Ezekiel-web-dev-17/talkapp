@@ -65,16 +65,16 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
 
   // changes the array of searched names
   const talk = (filter) => {
-    const searching = user.filter((chat) => {
-      return chat.toLowerCase().includes(filter.toLowerCase());
-    });
+    const searching = user.filter((chat) =>
+      chat.name.toLowerCase().includes(filter.toLowerCase())
+    );
     setSearched(searching);
   };
 
   // allows change of searched on changing input value
   useEffect(() => {
     talk(filter);
-  }, [filter]);
+  }, filter);
 
   return (
     <div className="display-chats  pb-5 px-0">
@@ -84,8 +84,7 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
           className="text-center text-white ps-4 pt-3 position-absolute bg-transparent"
           style={{ fontSize: "12px" }}
         >
-          <strong className=" text-danger ">{`${error}`}</strong>, Can't connect
-          to the Internet.😭😞😖😟
+          <strong className=" text-danger ">{`${error}`}</strong>
         </p>
       )}
       {searchMode ? (
