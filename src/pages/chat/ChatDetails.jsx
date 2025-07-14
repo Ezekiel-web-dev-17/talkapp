@@ -12,6 +12,7 @@ const ChatDetails = () => {
   const [newMessage, setNewMessage] = useState("");
   const [to, setTo] = useState({});
   const messagesEndRef = useRef(null);
+  const [loading, setLoading] = useState(false);
   const conversations = messages.filter((msg) => {
     if (msg.participants.includes(user) && msg.participants.length === 2) {
       return msg.participants.includes(to._id);
@@ -24,10 +25,19 @@ const ChatDetails = () => {
     const getMsgs = new Promise((resolve, reject) => {
       const getMsg = async () => {
         try {
+          setLoading(true);
+          setError("");
           const res = await api.get("/messages/");
           resolve(res);
+          setLoading(false);
         } catch (error) {
           reject(error);
+          setLoading(false);
+          if (error.code === "ERR_NETWORK") {
+            setError({
+              message: "Network Error. Please check your connection.",
+            });
+          }
         }
       };
 
@@ -115,6 +125,18 @@ const ChatDetails = () => {
       </nav>
 
       {/* Messages Area */}
+      {loading && (
+        <div className="d-flex justify-content-center align-items-center vh-100">
+          <div
+            className="spinner-border text-white"
+            style={{ width: "3rem", height: "3rem" }}
+            role="status"
+          >
+            <span className="visually-hidden">Loading...</span>
+          </div>{" "}
+        </div>
+      )}
+
       <div
         className="messages-area px-3 mx-3 pt-2  mb-2 pb-5"
         ref={messagesEndRef}

@@ -8,8 +8,10 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
   const api = useContext(ApiContext);
   const [error, setError] = useState("");
   const [user, setUser] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchUsersId = async () => {
+    setLoading(true);
     try {
       const response = await api.get("/messages");
 
@@ -23,23 +25,18 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
 
       function recentMsgToEachPerson(arr, response) {
         const mapMessages = {};
-        response.data.data.map((res) => {
+        response.data.data.forEach((res) => {
           for (let i = 0; i < arr.length; i++) {
             if (res.participants.includes(arr[i])) {
               mapMessages[arr[i]] = res;
             }
           }
         });
-
         return mapMessages;
       }
 
-      const idsRequests = spokenToWithNoRepeat.map((id) => {
-        return id;
-      });
-
       const nameRequests = await api.post("/users/multi", {
-        userIds: idsRequests,
+        userIds: spokenToWithNoRepeat,
       });
 
       const userMap = {};
@@ -49,7 +46,7 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
 
       const recentMsgs = recentMsgToEachPerson(spokenToWithNoRepeat, response);
 
-      const userArray = Object.keys(recentMsgs).map((id, i) => ({
+      const userArray = Object.keys(recentMsgs).map((id) => ({
         ...recentMsgs[id],
         name: userMap[id] || "Unknown User",
       }));
@@ -58,6 +55,8 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
     } catch (error) {
       console.error(error);
       setError("Error getting users messages: " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,12 +91,40 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
       )}
       {searchMode ? (
         searched.length > 0 ? (
-          <EachTalker searched={searched} userId={userId} />
+          loading ? (
+            <div
+              className="d-flex justify-content-center align-items-center"
+              style={{ height: "100vh" }}
+            >
+              <div
+                className="spinner-border text-primary"
+                style={{ width: "2.95rem", height: "2.95rem" }}
+                role="status"
+              >
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          ) : (
+            <EachTalker searched={searched} userId={userId} />
+          )
         ) : (
           <p className=" text-white pt-5 ms-4 fs-6">
             Sorry, no Search found 🥺🥺😞
           </p>
         )
+      ) : loading ? (
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: "100vh" }}
+        >
+          <div
+            className="spinner-border text-primary"
+            style={{ width: "2.95rem", height: "2.95rem" }}
+            role="status"
+          >
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
       ) : (
         <EachTalker searched={user} userId={userId} />
       )}
