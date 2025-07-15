@@ -46,7 +46,7 @@ const NavBar = ({ filter, setFilter, searchMode, setSearchMode }) => {
             <BsSearch
               style={{ fontSize: "12px" }}
               onClick={() => {
-                setSearchMode(!searchMode);
+                // setSearchMode(!searchMode);
               }}
             />
             <Link to="/login" className="text-white">

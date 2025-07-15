@@ -25,13 +25,23 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
 
       function recentMsgToEachPerson(arr, response) {
         const mapMessages = {};
-        response.data.data.forEach((res) => {
-          for (let i = 0; i < arr.length; i++) {
-            if (res.participants.includes(arr[i])) {
-              mapMessages[arr[i]] = res;
+
+        response.data.data.forEach((msg) => {
+          arr.forEach((id) => {
+            if (
+              msg.participants.includes(id) &&
+              msg.participants.includes(userId)
+            ) {
+              if (
+                !mapMessages[id] ||
+                new Date(msg.createdAt) > new Date(mapMessages[id].createdAt)
+              ) {
+                mapMessages[id] = msg;
+              }
             }
-          }
+          });
         });
+
         return mapMessages;
       }
 
@@ -54,7 +64,7 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
       setUser(userArray);
     } catch (error) {
       console.error(error);
-      setError("Error getting users messages: " + error.message);
+      setError("Sorry can't get your Talks due to " + error.message + ".");
     } finally {
       setLoading(false);
     }
@@ -76,7 +86,6 @@ const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
   // useEffect(() => {
   //   talk(filter);
   // }, [filter]);
-  console.log(user);
 
   return (
     <div className="display-chats  pb-5 px-0">
